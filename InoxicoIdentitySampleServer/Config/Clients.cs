@@ -44,8 +44,37 @@ namespace InoxicoIdentitySampleServer.Config
 
                     AccessTokenType = AccessTokenType.Reference,
                     AllowClientCredentialsOnly = true,
-                    EnableLocalLogin = true
+                    EnableLocalLogin = true,
+                    AccessTokenLifetime = 3600,
 
+                    AbsoluteRefreshTokenLifetime = 86400,
+                    SlidingRefreshTokenLifetime = 43200,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+
+                },
+                new Client
+                {
+                    ClientName = "Third Party Client",
+                    Enabled = true,
+
+                    ClientId = "third_party_client",
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret1".Sha256()),
+                    },
+
+                    Flow = Flows.Custom,
+                    AllowedCustomGrantTypes = new List<string>
+                    {
+                        "third_party_client_grant"
+                    },
+
+                    AllowedScopes = new List<string>
+                    {
+                        "read",
+                        "write",
+                    },
                 },
             };
         }
