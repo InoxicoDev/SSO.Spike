@@ -1,16 +1,15 @@
-﻿using Microsoft.Owin;
-using Microsoft.Owin.Security.Cookies;
+﻿using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using IdentityModel;
 
 namespace ThirdPartySampleApp
 {
     public class Startup
     {
-        private const string IdSvrBaseAddress = "https://localhost:44303/core";
-        private const string SampleCoreBaseAddress = "https://localhost:44302/";
+        private const string IdSvrBaseAddress = "https://localhost:44303";
 
         public void Configuration(IAppBuilder app)
         {

@@ -13,19 +13,9 @@ namespace ThirdPartyIdentity.Config
                 new Client
                 {
                     ClientName = "Third Party Client",
-                    Enabled = true,
-
                     ClientId = "third_party_client",
-                    ClientSecrets = new List<Secret>
-                    {
-                        new Secret("secret1".Sha256()),
-                    },
-
                     Flow = Flows.Implicit,
-                    ClientUri = "https://identityserver.io",
-
-                    RequireConsent = true,
-                    AllowRememberConsent = true,
+                    AllowAccessTokensViaBrowser = false,
 
                     AllowedScopes = new List<string>
                     {
@@ -36,12 +26,17 @@ namespace ThirdPartyIdentity.Config
                         Constants.StandardScopes.Address,
                     },
 
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = false,
+                    AllowRememberConsent = false,
+
                     RedirectUris = new List<string>
                     {
-                        "http://localhost:57255/"
+                        "http://localhost:44304/"
                     },
 
-                    LogoutUri = "http://localhost:59185/Home/SignoutCleanup",
+                    LogoutUri = "http://localhost:44304/Home/SignoutCleanup",
                     LogoutSessionRequired = true,
                 },
             };

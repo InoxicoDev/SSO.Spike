@@ -9,17 +9,19 @@ namespace ThirdPartySampleApp.Controllers
 {
     public class HomeController : Controller
     {
-        private const string SampleCoreBaseAddress = "http://localhost:57255/";
+        private const string SampleCoreBaseAddress = "https://localhost:44302/";
 
+        [Authorize]
         public ActionResult Index()
         {
             return View();
         }
 
-        [HttpPost]
+        [Authorize ,HttpPost]
         public ActionResult Index(string coreUrl = null)
         {
-            return Redirect("Home/About");
+            // Make call to get redirect url.
+            return Redirect(SampleCoreBaseAddress);
         }
 
         [Authorize]
@@ -36,12 +38,6 @@ namespace ThirdPartySampleApp.Controllers
             }
 
             return View();
-        }
-
-        [Authorize, HttpPost]
-        public ActionResult About(string stuff = null)
-        {
-            return Redirect(SampleCoreBaseAddress);
         }
 
         public ActionResult Signout()

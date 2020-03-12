@@ -20,6 +20,7 @@ namespace ThirdPartyIdentity
 
                 SigningCertificate = Certificate.Get(),
                 Factory = factory,
+                AuthenticationOptions = { EnableLocalLogin = true },
             };
 
             appBuilder.UseIdentityServer(options);
