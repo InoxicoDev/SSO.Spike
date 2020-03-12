@@ -20,27 +20,7 @@ namespace ThirdPartyIdentity.Config
                         new Claim(Constants.ClaimTypes.Email, "bob@email.com"),
                         new Claim(Constants.ClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                     }
-                },
-                new InMemoryUser{Subject = "thirdPartyUser2", Username = "jane", Password = "jane",
-                    Claims = new Claim[]
-                    {
-                        new Claim(Constants.ClaimTypes.Name, "Jane Doe"),
-                        new Claim(Constants.ClaimTypes.GivenName, "Jane"),
-                        new Claim(Constants.ClaimTypes.FamilyName, "Doe"),
-                        new Claim(Constants.ClaimTypes.Email, "jane@email.com"),
-                        new Claim(Constants.ClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                    }
-                },
-                new InMemoryUser{Subject = "inoxicoUser1", Username = "steve", Password = "steve",
-                    Claims = new Claim[]
-                    {
-                        new Claim(Constants.ClaimTypes.Name, "Steve Doe"),
-                        new Claim(Constants.ClaimTypes.GivenName, "Steve"),
-                        new Claim(Constants.ClaimTypes.FamilyName, "Doe"),
-                        new Claim(Constants.ClaimTypes.Email, "steve@email.com"),
-                        new Claim(Constants.ClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                    }
-                },
+                }
             };
 
             return users;

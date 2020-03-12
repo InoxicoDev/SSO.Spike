@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("InoxicoCoreSample")]
+[assembly: AssemblyTitle("InoxicoTargetApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("InoxicoCoreSample")]
+[assembly: AssemblyProduct("InoxicoTargetApp")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b41d53ee-76b6-4f40-9671-4c2a145efb54")]
+[assembly: Guid("9d36803c-e910-4a08-81a3-0085d3c096f3")]
 
 // Version information for an assembly consists of the following four values:
 //

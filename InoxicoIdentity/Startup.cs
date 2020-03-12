@@ -20,7 +20,7 @@ namespace InoxicoIdentity
 
                 SigningCertificate = Certificate.Get(),
                 Factory = factory,
-                AuthenticationOptions = { EnableLocalLogin = true }
+                //AuthenticationOptions = { EnableLocalLogin = true }
             };
 
             appBuilder.UseIdentityServer(options);
