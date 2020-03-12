@@ -1,16 +1,16 @@
 ﻿using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
-namespace InoxicoIdentitySampleServer.Config
+namespace InoxicoIdentity.Config
 {
     class Certificate
     {
         public static X509Certificate2 Get()
         {
             var assembly = typeof(Certificate).Assembly;
-            using (var stream = assembly.GetManifestResourceStream("InoxicoIdentitySampleServer.Config.idsrv3test.pfx"))
+            using (var stream = assembly.GetManifestResourceStream("InoxicoIdentity.Config.localsts.pfx"))
             {
-                return new X509Certificate2(ReadStream(stream), "idsrv3test");
+                return new X509Certificate2(ReadStream(stream), "");
             }
         }
 

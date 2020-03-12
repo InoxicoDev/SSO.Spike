@@ -2,7 +2,7 @@
 using IdentityServer3.Core;
 using IdentityServer3.Core.Models;
 
-namespace InoxicoIdentitySampleServer.Config
+namespace ThirdPartyIdentity.Config
 {
     class Scopes
     {

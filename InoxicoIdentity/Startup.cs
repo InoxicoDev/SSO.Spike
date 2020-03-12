@@ -1,10 +1,8 @@
 ﻿using IdentityServer3.Core.Configuration;
-using InoxicoIdentitySampleServer.Config;
-using IdentityServer3.Core.Services;
-using InoxicoIdentitySampleServer.Extensions;
+using InoxicoIdentity.Config;
 using Owin;
 
-namespace InoxicoIdentitySampleServer
+namespace InoxicoIdentity
 {
     internal class Startup
     {
@@ -15,10 +13,6 @@ namespace InoxicoIdentitySampleServer
                 .UseInMemoryClients(Clients.Get())
                 .UseInMemoryScopes(Scopes.Get())
                 .UseInMemoryUsers(Users.Get());
-
-            //factory.ClaimsProvider = new Registration<IClaimsProvider>(typeof(GenericClaimsProvider));
-            //factory.UserService = new Registration<IUserService>(typeof(GenericUserService));
-            //factory.CustomGrantValidators.Add(new Registration<ICustomGrantValidator>(typeof(ExternalGrantValidator)));
 
             var options = new IdentityServerOptions
             {
