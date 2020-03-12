@@ -41,7 +41,7 @@ namespace InoxicoIdentity.Config
                     },
 
                     AccessTokenType = AccessTokenType.Reference,
-                    AllowClientCredentialsOnly = true,
+                    AllowClientCredentialsOnly = false,
                 },
                 
             };
