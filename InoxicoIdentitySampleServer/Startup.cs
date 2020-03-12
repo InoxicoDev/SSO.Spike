@@ -16,9 +16,9 @@ namespace InoxicoIdentitySampleServer
                 .UseInMemoryScopes(Scopes.Get())
                 .UseInMemoryUsers(Users.Get());
 
-            factory.ClaimsProvider = new Registration<IClaimsProvider>(typeof(GenericClaimsProvider));
-            factory.UserService = new Registration<IUserService>(typeof(GenericUserService));
-            factory.CustomGrantValidators.Add(new Registration<ICustomGrantValidator>(typeof(ExternalGrantValidator)));
+            //factory.ClaimsProvider = new Registration<IClaimsProvider>(typeof(GenericClaimsProvider));
+            //factory.UserService = new Registration<IUserService>(typeof(GenericUserService));
+            //factory.CustomGrantValidators.Add(new Registration<ICustomGrantValidator>(typeof(ExternalGrantValidator)));
 
             var options = new IdentityServerOptions
             {

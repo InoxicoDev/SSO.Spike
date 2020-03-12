@@ -44,13 +44,13 @@ namespace InoxicoIdentitySampleServer.Config
 
                     AccessTokenType = AccessTokenType.Reference,
                     AllowClientCredentialsOnly = true,
-                    EnableLocalLogin = true,
-                    AccessTokenLifetime = 3600,
+                    //EnableLocalLogin = true,
+                    //AccessTokenLifetime = 3600,
 
-                    AbsoluteRefreshTokenLifetime = 86400,
-                    SlidingRefreshTokenLifetime = 43200,
-                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
-                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    //AbsoluteRefreshTokenLifetime = 86400,
+                    //SlidingRefreshTokenLifetime = 43200,
+                    //RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    //RefreshTokenExpiration = TokenExpiration.Sliding,
 
                 },
                 new Client
@@ -64,17 +64,28 @@ namespace InoxicoIdentitySampleServer.Config
                         new Secret("secret1".Sha256()),
                     },
 
-                    Flow = Flows.Custom,
-                    AllowedCustomGrantTypes = new List<string>
-                    {
-                        "third_party_client_grant"
-                    },
+                    Flow = Flows.Implicit,
+                    ClientUri = "https://identityserver.io",
+
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
 
                     AllowedScopes = new List<string>
                     {
-                        "read",
-                        "write",
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.Address,
                     },
+
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost:57255/"
+                    },
+
+                    LogoutUri = "http://localhost:59185/Home/SignoutCleanup",
+                    LogoutSessionRequired = true,
                 },
             };
         }
