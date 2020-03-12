@@ -4,7 +4,7 @@ using Owin;
 
 namespace InoxicoIdentity
 {
-    internal class Startup
+    public class Startup
     {
         public void Configuration(IAppBuilder appBuilder)
         {
