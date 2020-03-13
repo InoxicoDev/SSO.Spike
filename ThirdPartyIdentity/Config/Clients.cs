@@ -33,7 +33,7 @@ namespace ThirdPartyIdentity.Config
 
                     RedirectUris = new List<string>
                     {
-                        "http://localhost:44304/"
+                        "https://localhost:44304/"
                     },
 
                     LogoutUri = "http://localhost:44304/Home/SignoutCleanup",

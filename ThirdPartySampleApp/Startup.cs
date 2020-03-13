@@ -9,7 +9,7 @@ namespace ThirdPartySampleApp
 {
     public class Startup
     {
-        private const string IdSvrBaseAddress = "https://localhost:44303";
+        private const string IdSvrBaseAddress = "https://localhost:44303/";
 
         public void Configuration(IAppBuilder app)
         {
