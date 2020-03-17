@@ -30,5 +30,10 @@ namespace InoxicoTargetApp.Controllers
 
             return $"{this.Request.Url.Scheme}://{this.Request.Url.Authority}/{refCode}";
         }
+
+        public async Task<string> AuthenticateExternalUserWithRefCode(string refCode)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:44301/api/ReferenceCode/{clientId}");
+        }
     }
 }
