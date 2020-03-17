@@ -15,6 +15,13 @@ namespace InoxicoIdentity.Controllers
 {
     public class ReferenceCodeController : ApiController
     {
+        private readonly RefCoreRegistry _refCoreRegistry;
+
+        public ReferenceCodeController(RefCoreRegistry refCoreRegistry)
+        {
+            _refCoreRegistry = refCoreRegistry;
+        }
+
         [HttpPut]
         public async Task<string> Create()
         {
@@ -31,8 +38,8 @@ namespace InoxicoIdentity.Controllers
                 throw new Exception("Invalid token");
             }
 
-            var name = user.Identity.Name;
-            return Guid.NewGuid().ToString();
+            var name = user.Claims.Single(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
+            return _refCoreRegistry.CreateRefCodeForUser(name);
         }
 
         private async Task<ClaimsPrincipal> ValidateToken(string token)

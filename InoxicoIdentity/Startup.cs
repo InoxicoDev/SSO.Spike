@@ -2,6 +2,7 @@
 using InoxicoIdentity.App_Start;
 using InoxicoIdentity.Config;
 using Owin;
+using Unity;
 
 namespace InoxicoIdentity
 {
@@ -17,6 +18,8 @@ namespace InoxicoIdentity
                 .UseInMemoryClients(Clients.Get())
                 .UseInMemoryScopes(Scopes.Get())
                 .UseInMemoryUsers(Users.Get());
+
+            factory.Register(new Registration<RefCoreRegistry>(r => UnityConfig.GetConfiguredContainer().Resolve<RefCoreRegistry>()));
 
             var options = new IdentityServerOptions
             {
