@@ -41,6 +41,7 @@ namespace ThirdPartyIdentity.Config
 
                     LogoutUri = "http://localhost:44304/Home/SignoutCleanup",
                     LogoutSessionRequired = true,
+                    AccessTokenLifetime = 18000
                 },
             };
         }

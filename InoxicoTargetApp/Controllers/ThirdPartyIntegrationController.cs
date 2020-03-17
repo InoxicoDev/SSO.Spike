@@ -28,7 +28,7 @@ namespace InoxicoTargetApp.Controllers
             var refCode = await response.Content.ReadAsStringAsync();
             refCode = refCode.Replace("\"", string.Empty);
 
-            return $"{this.Request.Url.Scheme}://{this.Request.Url.Authority}/{refCode}";
+            return $"{this.Request.Url.Scheme}://{this.Request.Url.Authority}/ThirdPartyIntegration/AuthenticateExternalUserWithRefCode?refCode={refCode}";
         }
 
         public async Task<ActionResult> AuthenticateExternalUserWithRefCode(string refCode)
