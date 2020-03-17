@@ -31,6 +31,8 @@ namespace ThirdPartySampleApp
 
                 UseTokenLifetime = false,
                 SignInAsAuthenticationType = "Cookies",
+
+                SaveTokens = true
             });
         }
     }

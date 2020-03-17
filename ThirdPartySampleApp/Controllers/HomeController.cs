@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Security.Claims;
 using IdentityModel.Client;
+using Microsoft.Owin.Security;
 
 namespace ThirdPartySampleApp.Controllers
 {
@@ -58,13 +59,14 @@ namespace ThirdPartySampleApp.Controllers
         {
             ViewBag.Message = "You are logged in now. Here's your token:";
 
-            var user = User as ClaimsPrincipal;
-            var token = user.FindFirst("access_token");
-
-            if (token != null)
+            /*var user = User as ClaimsPrincipal;
+            var token = user.FindFirst("access_token");*/
+            /*if (token != null)
             {
                 ViewData["access_token"] = token.Value;
-            }
+            }*/
+
+            var authProperties = HttpContext.GetOwinContext().Authentication.AuthenticateAsync("Cookies").Result;
 
             return View();
         }
