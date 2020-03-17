@@ -36,7 +36,14 @@ namespace InoxicoAdapter.Controllers
         {
         }
 
+        // API 1
         public RefCodeResponse GetRedirectUrl(object thirdPartyRequestObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        // API 2
+        public string GetInoxicoreCoreRedirectUrl(Guid referenceCode)
         {
             throw new NotImplementedException();
         }
