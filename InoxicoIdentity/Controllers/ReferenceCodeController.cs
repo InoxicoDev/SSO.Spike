@@ -45,15 +45,21 @@ namespace InoxicoIdentity.Controllers
                 new TokenValidationParameters
                 {
                     ValidIssuer = "https://localhost:44303",
-                    ValidAudiences = new[] { "https://localhost:44303/resources" },
+                    ValidAudiences = new[] { "third_party_client" },
                     IssuerSigningKeys = openIdConfig.SigningKeys
                 };
 
             SecurityToken validatedToken;
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            var user = handler.ValidateToken(token, validationParameters, out validatedToken);
-            
-            return user;
+            try
+            {
+                var user = handler.ValidateToken(token, validationParameters, out validatedToken);
+                return user;
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
         }
     }
 }
