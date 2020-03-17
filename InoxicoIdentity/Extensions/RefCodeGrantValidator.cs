@@ -31,7 +31,13 @@ namespace InoxicoIdentity.Extensions
                 return new CustomGrantValidationResult("refCode not specified");
             }
 
-            var context = new ProfileDataRequestContext(new ClaimsPrincipal(new ClaimsIdentity()), request.Client, GrantType);
+            var externalUserID = _refCodeRegistry.GetExternalUserId(refCode);
+            if (externalUserID == null)
+            {
+                throw new Exception("Invalid RefCode");
+            }
+
+            var context = new ProfileDataRequestContext(new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim("ExternalUserId", externalUserID) })), request.Client, GrantType);
             await _users.GetProfileDataAsync(context);
 
             if (context.IssuedClaims == null)

@@ -11,7 +11,7 @@ namespace InoxicoIdentity
 
         public string CreateRefCodeForUser(string externalUserId)
         {
-            var existingEntry = entries.SingleOrDefault(p => p.Name == externalUserId);
+            var existingEntry = entries.SingleOrDefault(p => p.ExternalUserId == externalUserId);
             if (existingEntry != null)
             {
                 entries.Remove(existingEntry);
@@ -23,16 +23,34 @@ namespace InoxicoIdentity
             return newEntry.RefCode;
         }
 
+        public string GetExternalUserId(string refCode)
+        {
+            var entry = entries.Single(p => p.RefCode == refCode);
+            if (entry == null)
+            {
+                return null;
+            }
+
+            entries.Remove(entry);
+
+            if (entry.Expire <= DateTime.Now)
+            {
+                return null;
+            }
+
+            return entry.ExternalUserId;
+        }
+
         class Entry
         {
             public Entry(string name, string refCode, DateTime expire)
             {
-                Name = name;
+                ExternalUserId = name;
                 RefCode = refCode;
                 Expire = expire;
             }
 
-            public string Name { get; }
+            public string ExternalUserId { get; }
             public string RefCode { get; }
             public DateTime Expire { get; }
         }
