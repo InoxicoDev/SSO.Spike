@@ -13,7 +13,7 @@ namespace ThirdPartySampleApp.Controllers
 {
     public class HomeController : Controller
     {
-        private const string InoxicoCoreBaseUrl = "https://localhost:44302";
+        private const string InoxicoCoreBaseUrl = "https://localhost:44302/ThirdPartyIntegration/AuthenticateExternalUser";
 
         private static readonly HttpClient _httpClient = new HttpClient();
 
@@ -24,13 +24,13 @@ namespace ThirdPartySampleApp.Controllers
         }
 
         [Authorize]
-        public ActionResult GoToInoxicoCore()
+        public async Task<ActionResult> GoToInoxicoCore()
         {
             // Make call to get redirect url.
             var authProperties = HttpContext.GetOwinContext().Authentication.AuthenticateAsync("Cookies").Result;
             var idToken = authProperties.Properties.Dictionary.First(x => x.Key == "id_token");
 
-            var redirectUrl = AuthenticateUserToInoxicoCore(idToken.Value);
+            var redirectUrl = await AuthenticateUserToInoxicoCore(idToken.Value);
 
             //return Redirect(redirectUrl.Result);
             return Redirect("/");
