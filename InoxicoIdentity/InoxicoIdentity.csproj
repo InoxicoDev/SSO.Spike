@@ -222,8 +222,10 @@
     <Compile Include="Config\Scopes.cs" />
     <Compile Include="Config\Users.cs" />
     <Compile Include="Controllers\ReferenceCodeController.cs" />
+    <Compile Include="Extensions\GenericUserService.cs" />
+    <Compile Include="Extensions\RefCodeGrantValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RefCoreRegistry.cs" />
+    <Compile Include="RefCodeRegistry.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

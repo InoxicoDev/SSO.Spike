@@ -1,6 +1,8 @@
 ﻿using IdentityServer3.Core.Configuration;
+using IdentityServer3.Core.Services;
 using InoxicoIdentity.App_Start;
 using InoxicoIdentity.Config;
+using InoxicoIdentity.Extensions;
 using Owin;
 using Unity;
 
@@ -19,7 +21,11 @@ namespace InoxicoIdentity
                 .UseInMemoryScopes(Scopes.Get())
                 .UseInMemoryUsers(Users.Get());
 
-            factory.Register(new Registration<RefCoreRegistry>(r => UnityConfig.GetConfiguredContainer().Resolve<RefCoreRegistry>()));
+            factory.Register(new Registration<RefCodeRegistry>(r => UnityConfig.GetConfiguredContainer().Resolve<RefCodeRegistry>()));
+            factory.UserService =
+                new Registration<IUserService>(typeof(GenericUserService));
+            factory.CustomGrantValidators.Add(
+                new Registration<ICustomGrantValidator>(typeof(RefCodeGrantValidator)));
 
             var options = new IdentityServerOptions
             {

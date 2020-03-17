@@ -29,6 +29,8 @@ namespace InoxicoIdentity.Config
                         "https://localhost:44304/",
                     },
 
+                    AllowedCustomGrantTypes = new List<string> { "refcode_grant" },
+
                     AllowedScopes = new List<string>
                     {
                         Constants.StandardScopes.OpenId,

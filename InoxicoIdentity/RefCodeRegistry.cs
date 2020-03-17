@@ -5,19 +5,19 @@ using System.Web;
 
 namespace InoxicoIdentity
 {
-    public class RefCoreRegistry
+    public class RefCodeRegistry
     {
         private readonly List<Entry> entries = new List<Entry>();
 
-        public string CreateRefCodeForUser(string name)
+        public string CreateRefCodeForUser(string externalUserId)
         {
-            var existingEntry = entries.SingleOrDefault(p => p.Name == name);
+            var existingEntry = entries.SingleOrDefault(p => p.Name == externalUserId);
             if (existingEntry != null)
             {
                 entries.Remove(existingEntry);
             }
 
-            var newEntry = new Entry(name, Guid.NewGuid().ToString(), DateTime.Now.AddMinutes(5));
+            var newEntry = new Entry(externalUserId, Guid.NewGuid().ToString(), DateTime.Now.AddMinutes(5));
             entries.Add(newEntry);
 
             return newEntry.RefCode;
