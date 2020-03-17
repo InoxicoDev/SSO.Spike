@@ -13,7 +13,7 @@ namespace ThirdPartySampleApp.Controllers
 {
     public class HomeController : Controller
     {
-        private const string InoxicoCoreBaseUrl = "https://localhost:44302/ThirdPartyIntegration/AuthenticateExternalUser";
+        private const string InoxicoCoreAuthenticateUrl = "https://localhost:44302/ThirdPartyIntegration/AuthenticateExternalUser";
 
         private static readonly HttpClient _httpClient = new HttpClient();
 
@@ -32,26 +32,18 @@ namespace ThirdPartySampleApp.Controllers
 
             var redirectUrl = await AuthenticateUserToInoxicoCore(idToken.Value);
 
-            //return Redirect(redirectUrl.Result);
-            return Redirect("/");
+            return Redirect(redirectUrl);
         }
 
         private async Task<string> AuthenticateUserToInoxicoCore(string idTokenValue)
         {
-            var response = await _httpClient.PostAsync(InoxicoCoreBaseUrl, new StringContent(idTokenValue));
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{InoxicoCoreAuthenticateUrl}?clientId=1234");
+            request.Content = new StringContent(string.Empty);
+            request.Headers.Add("id", idTokenValue);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
-            var refCode = await response.Content.ReadAsStringAsync();
-            return $"{Request.UserHostAddress}/{refCode}";
-        }
-
-        private static string HttpGet(string URI, string idTokenValue)
-        {
-            System.Net.WebRequest req = System.Net.WebRequest.Create(URI);
-            req.Headers.Add(idTokenValue);
-            //req.Proxy = new System.Net.WebProxy(ProxyString, true); //true means no proxy
-            System.Net.WebResponse resp = req.GetResponse();
-            System.IO.StreamReader sr = new System.IO.StreamReader(resp.GetResponseStream());
-            return sr.ReadToEnd().Trim();
+            var redirectUrl = await response.Content.ReadAsStringAsync();
+            return redirectUrl;
         }
 
         [Authorize]
