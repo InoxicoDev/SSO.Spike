@@ -31,9 +31,20 @@ namespace InoxicoTargetApp.Controllers
             return $"{this.Request.Url.Scheme}://{this.Request.Url.Authority}/{refCode}";
         }
 
-        public async Task<string> AuthenticateExternalUserWithRefCode(string refCode)
+        public async Task<ActionResult> AuthenticateExternalUserWithRefCode(string refCode)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:44301/api/ReferenceCode/{clientId}");
+            var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:44301/api/GetTokenUsingCode/{refCode}");
+            request.Content = new StringContent(string.Empty);
+
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var token = await response.Content.ReadAsStringAsync();
+
+            var client = new HttpClient();
+            client.SetBearerToken(token);
+
+            return Redirect("/");
         }
     }
 }
