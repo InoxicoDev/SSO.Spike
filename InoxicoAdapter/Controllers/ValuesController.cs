@@ -35,5 +35,16 @@ namespace InoxicoAdapter.Controllers
         public void Delete(int id)
         {
         }
+
+        public RefCodeResponse GetRedirectUrl(object thirdPartyRequestObject)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class RefCodeResponse
+    {
+        public bool validRequest;
+        public Guid referenceCode;
     }
 }
