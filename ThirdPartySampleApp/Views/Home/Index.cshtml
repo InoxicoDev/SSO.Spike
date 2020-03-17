@@ -5,10 +5,6 @@
 <div class="jumbotron">
     <h1>Third Party App Landing Page After Log In</h1>
     <h3>You're Logged in to third party app</h3>
-    @using (Html.BeginForm())
-    {
-        <button name="OK">Go to Sample Inoxico Core App</button>
-    }
-    
+    @Html.ActionLink("Go to Sample Inoxico Core App", "GoToInoxicoCore")
     @Html.ActionLink("Log out", "Signout")
 </div>

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Security.Claims;
+using IdentityModel.Client;
 
 namespace ThirdPartySampleApp.Controllers
 {
     public class HomeController : Controller
     {
-        private const string SampleCoreBaseAddress = "https://localhost:44302/";
+        private const string InoxicoIdentityAuthorizeRequest = "https://localhost:44333/core/connect/authorize";
 
         [Authorize]
         public ActionResult Index()
@@ -17,11 +18,39 @@ namespace ThirdPartySampleApp.Controllers
             return View();
         }
 
-        [Authorize ,HttpPost]
-        public ActionResult Index(string coreUrl = null)
+        [Authorize]
+        public ActionResult GoToInoxicoCore()
         {
+            var redirectUrl = "/";
             // Make call to get redirect url.
-            return Redirect(SampleCoreBaseAddress);
+            var state = Guid.NewGuid().ToString("N");
+            var nonce = Guid.NewGuid().ToString("N");
+            //SetTempState(state, nonce);
+            var user = User as ClaimsPrincipal;
+            var token = user.Identity;
+
+            var request = new RequestUrl(InoxicoIdentityAuthorizeRequest)
+                .CreateAuthorizeUrl(
+                    clientId: "codeclient",
+                    responseType: "code",
+                    scope: "openid email read profile",
+                    redirectUri: "https://localhost:44304/",
+                    state: state,
+                    nonce: nonce,
+                    prompt: "none"); //extra: token)
+
+            var response = HttpGet(request);
+
+            return Redirect(redirectUrl);
+        }
+
+        private static string HttpGet(string URI)
+        {
+            System.Net.WebRequest req = System.Net.WebRequest.Create(URI);
+            //req.Proxy = new System.Net.WebProxy(ProxyString, true); //true means no proxy
+            System.Net.WebResponse resp = req.GetResponse();
+            System.IO.StreamReader sr = new System.IO.StreamReader(resp.GetResponseStream());
+            return sr.ReadToEnd().Trim();
         }
 
         [Authorize]

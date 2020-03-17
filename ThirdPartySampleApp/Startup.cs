@@ -23,6 +23,7 @@ namespace ThirdPartySampleApp
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
             {
                 ClientId = "third_party_client",
+                ClientSecret = "secret".ToSha256(),
                 Authority = IdSvrBaseAddress,
                 RedirectUri = "https://localhost:44304/",
                 ResponseType = "id_token",

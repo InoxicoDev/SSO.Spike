@@ -14,6 +14,10 @@ namespace ThirdPartyIdentity.Config
                 {
                     ClientName = "Third Party Client",
                     ClientId = "third_party_client",
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret".Sha256())
+                    },
                     Flow = Flows.Implicit,
                     AllowAccessTokensViaBrowser = false,
 

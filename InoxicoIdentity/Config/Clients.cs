@@ -26,7 +26,7 @@ namespace InoxicoIdentity.Config
 
                     RedirectUris = new List<string>
                     {
-                        "https://localhost:44312/callback",
+                        "https://localhost:44304/",
                     },
 
                     AllowedScopes = new List<string>
@@ -41,7 +41,7 @@ namespace InoxicoIdentity.Config
                     },
 
                     AccessTokenType = AccessTokenType.Reference,
-                    AllowClientCredentialsOnly = false,
+                    AllowClientCredentialsOnly = true,
                 },
                 
             };
