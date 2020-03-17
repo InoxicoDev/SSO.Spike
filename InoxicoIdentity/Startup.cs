@@ -1,4 +1,5 @@
 ﻿using IdentityServer3.Core.Configuration;
+using InoxicoIdentity.App_Start;
 using InoxicoIdentity.Config;
 using Owin;
 
@@ -8,7 +9,10 @@ namespace InoxicoIdentity
     {
         public void Configuration(IAppBuilder appBuilder)
         {
+            WebApiConfig.Configure(appBuilder);
+
             var factory = new IdentityServerServiceFactory();
+            
             factory
                 .UseInMemoryClients(Clients.Get())
                 .UseInMemoryScopes(Scopes.Get())
