@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.Owin.Security;
 
@@ -11,7 +13,9 @@ namespace ThirdPartySampleApp.Controllers
 {
     public class HomeController : Controller
     {
-        private const string InoxicoIdentityAuthorizeRequest = "https://localhost:44333/core/connect/authorize";
+        private const string InoxicoCoreBaseUrl = "https://localhost:44302";
+
+        private static readonly HttpClient _httpClient = new HttpClient();
 
         [Authorize]
         public ActionResult Index()
@@ -22,32 +26,28 @@ namespace ThirdPartySampleApp.Controllers
         [Authorize]
         public ActionResult GoToInoxicoCore()
         {
-            var redirectUrl = "/";
             // Make call to get redirect url.
-            var state = Guid.NewGuid().ToString("N");
-            var nonce = Guid.NewGuid().ToString("N");
-            //SetTempState(state, nonce);
-            var user = User as ClaimsPrincipal;
-            var token = user.Identity;
+            var authProperties = HttpContext.GetOwinContext().Authentication.AuthenticateAsync("Cookies").Result;
+            var idToken = authProperties.Properties.Dictionary.First(x => x.Key == "id_token");
 
-            var request = new RequestUrl(InoxicoIdentityAuthorizeRequest)
-                .CreateAuthorizeUrl(
-                    clientId: "codeclient",
-                    responseType: "code",
-                    scope: "openid email read profile",
-                    redirectUri: "https://localhost:44304/",
-                    state: state,
-                    nonce: nonce,
-                    prompt: "none"); //extra: token)
+            var redirectUrl = AuthenticateUserToInoxicoCore(idToken.Value);
 
-            var response = HttpGet(request);
-
-            return Redirect(redirectUrl);
+            //return Redirect(redirectUrl.Result);
+            return Redirect("/");
         }
 
-        private static string HttpGet(string URI)
+        private async Task<string> AuthenticateUserToInoxicoCore(string idTokenValue)
+        {
+            var response = await _httpClient.PostAsync(InoxicoCoreBaseUrl, new StringContent(idTokenValue));
+            response.EnsureSuccessStatusCode();
+            var refCode = await response.Content.ReadAsStringAsync();
+            return $"{Request.UserHostAddress}/{refCode}";
+        }
+
+        private static string HttpGet(string URI, string idTokenValue)
         {
             System.Net.WebRequest req = System.Net.WebRequest.Create(URI);
+            req.Headers.Add(idTokenValue);
             //req.Proxy = new System.Net.WebProxy(ProxyString, true); //true means no proxy
             System.Net.WebResponse resp = req.GetResponse();
             System.IO.StreamReader sr = new System.IO.StreamReader(resp.GetResponseStream());

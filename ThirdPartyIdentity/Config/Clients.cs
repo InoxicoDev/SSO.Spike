@@ -19,7 +19,6 @@ namespace ThirdPartyIdentity.Config
                         new Secret("secret".Sha256())
                     },
                     Flow = Flows.Implicit,
-                    AllowAccessTokensViaBrowser = false,
 
                     AllowedScopes = new List<string>
                     {

@@ -26,7 +26,7 @@ namespace ThirdPartySampleApp
                 ClientSecret = "secret".ToSha256(),
                 Authority = IdSvrBaseAddress,
                 RedirectUri = "https://localhost:44304/",
-                ResponseType = "id_token",
+                ResponseType = "id_token token",
                 Scope = "openid email",
 
                 UseTokenLifetime = false,
