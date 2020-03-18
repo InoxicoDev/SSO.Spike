@@ -45,7 +45,30 @@ namespace InoxicoIdentity.Config
                     AccessTokenType = AccessTokenType.Reference,
                     AllowClientCredentialsOnly = true,
                 },
-                
+                new Client
+                {
+                    ClientName = "External Client",
+                    Enabled = true,
+
+                    ClientId = "external_client",
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret1".Sha256()),
+                    },
+
+                    Flow = Flows.Custom,
+                    AllowedCustomGrantTypes = new List<string>
+                    {
+                        "refcode_grant"
+                    },
+
+                    AllowedScopes = new List<string>
+                    {
+                        "read",
+                        "write",
+                    },
+                },
+
             };
         }
     }

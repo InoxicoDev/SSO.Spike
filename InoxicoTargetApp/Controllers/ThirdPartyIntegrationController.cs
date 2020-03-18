@@ -33,6 +33,7 @@ namespace InoxicoTargetApp.Controllers
 
         public async Task<ActionResult> AuthenticateExternalUserWithRefCode(string refCode)
         {
+            // Ignore contents of this method
             var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:44301/api/GetTokenUsingCode/{refCode}");
             request.Content = new StringContent(string.Empty);
 
