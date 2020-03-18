@@ -47,10 +47,10 @@ namespace InoxicoIdentity.Config
                 },
                 new Client
                 {
-                    ClientName = "External Client",
+                    ClientName = "External Ref Code Client",
                     Enabled = true,
 
-                    ClientId = "external_client",
+                    ClientId = "external_ref_code_client",
                     ClientSecrets = new List<Secret>
                     {
                         new Secret("secret1".Sha256()),

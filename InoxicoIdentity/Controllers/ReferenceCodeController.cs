@@ -5,19 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using IdentityModel.Client;
 
 namespace InoxicoIdentity.Controllers
 {
     public class ReferenceCodeController : ApiController
     {
-        private static string InoxicoIdentityStsClientAddress = "https://localhost:44301/connect/token";
         private readonly RefCodeRegistry _refCodeRegistry;
 
         public ReferenceCodeController(RefCodeRegistry refCodeRegistry)
@@ -43,23 +40,6 @@ namespace InoxicoIdentity.Controllers
 
             var externalUserId = user.Claims.Single(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
             return _refCodeRegistry.CreateRefCodeForUser(externalUserId);
-        }
-
-        public async Task<string> GetTokenUsingCode(string refCode)
-        {
-            var internalStsRefCodeClient = new TokenClient(
-                new HttpMessageInvoker(), 
-                new TokenClientOptions()
-                {
-                    Address = InoxicoIdentityStsClientAddress,
-                    ClientId = "external_client",
-                    ClientSecret = "secret1"
-                }
-            );
-
-
-            var token = "sdgsdgsdsdgsdgsdgsdgsdgsdgsdgsdgsdg";
-            return token;
         }
 
         private async Task<ClaimsPrincipal> ValidateToken(string token)

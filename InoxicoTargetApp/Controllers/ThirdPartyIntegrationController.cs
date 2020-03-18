@@ -1,5 +1,6 @@
 ﻿using IdentityModel.Client;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -11,6 +12,7 @@ namespace InoxicoTargetApp.Controllers
 {
     public class ThirdPartyIntegrationController : Controller
     {
+        private static string InoxicoIdentityStsClientAddress = "https://localhost:44301/connect/token";
         private static readonly HttpClient _httpClient = new HttpClient();
 
         [HttpPost]
@@ -33,17 +35,28 @@ namespace InoxicoTargetApp.Controllers
 
         public async Task<ActionResult> AuthenticateExternalUserWithRefCode(string refCode)
         {
+            var client = new TokenClient(
+                _httpClient,
+                new TokenClientOptions()
+                {
+                    Address = InoxicoIdentityStsClientAddress,
+                    ClientId = "external_ref_code_client",
+                    ClientSecret = "secret1"
+                });
+
+            var token = await client.RequestTokenAsync("refcode_grant", new Dictionary<string, string>
+            {
+                {"refCode", refCode}
+            });
+
             // Ignore contents of this method
-            var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:44301/api/GetTokenUsingCode/{refCode}");
-            request.Content = new StringContent(string.Empty);
+            //var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:44301/api/GetTokenUsingCode/{refCode}");
+            //request.Content = new StringContent(string.Empty);
 
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            //var response = await _httpClient.SendAsync(request);
+            //response.EnsureSuccessStatusCode();
 
-            var token = await response.Content.ReadAsStringAsync();
-
-            var client = new HttpClient();
-            client.SetBearerToken(token);
+            //var token = await response.Content.ReadAsStringAsync();
 
             return Redirect("/");
         }
