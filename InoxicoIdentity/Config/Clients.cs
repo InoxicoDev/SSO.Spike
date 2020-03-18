@@ -12,9 +12,9 @@ namespace InoxicoIdentity.Config
             {
                 new Client
                 {
-                    ClientName = "Code Flow Client Demo",
-                    ClientId = "codeclient",
-                    Flow = Flows.AuthorizationCode,
+                    ClientName = "External Ref Code Flow Client",
+                    ClientId = "external_ref_code_client",
+                    Flow = Flows.Custom,
 
                     ClientSecrets = new List<Secret>
                     {
@@ -41,34 +41,9 @@ namespace InoxicoIdentity.Config
                         "read",
                         "write"
                     },
-
-                    AccessTokenType = AccessTokenType.Reference,
                     AllowClientCredentialsOnly = true,
                 },
-                new Client
-                {
-                    ClientName = "External Ref Code Client",
-                    Enabled = true,
-
-                    ClientId = "external_ref_code_client",
-                    ClientSecrets = new List<Secret>
-                    {
-                        new Secret("secret1".Sha256()),
-                    },
-
-                    Flow = Flows.Custom,
-                    AllowedCustomGrantTypes = new List<string>
-                    {
-                        "refcode_grant"
-                    },
-
-                    AllowedScopes = new List<string>
-                    {
-                        "read",
-                        "write",
-                    },
-                },
-
+                
             };
         }
     }

@@ -41,22 +41,20 @@ namespace InoxicoTargetApp.Controllers
                 {
                     Address = InoxicoIdentityStsClientAddress,
                     ClientId = "external_ref_code_client",
-                    ClientSecret = "secret1"
+                    ClientSecret = "secret",
+                    Parameters = new Dictionary<string, string>
+                    {
+                        {"scope", "read write email"}
+                    }
                 });
+
 
             var token = await client.RequestTokenAsync("refcode_grant", new Dictionary<string, string>
             {
                 {"refCode", refCode}
             });
 
-            // Ignore contents of this method
-            //var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:44301/api/GetTokenUsingCode/{refCode}");
-            //request.Content = new StringContent(string.Empty);
-
-            //var response = await _httpClient.SendAsync(request);
-            //response.EnsureSuccessStatusCode();
-
-            //var token = await response.Content.ReadAsStringAsync();
+            // Embed token to user browser
 
             return Redirect("/");
         }
