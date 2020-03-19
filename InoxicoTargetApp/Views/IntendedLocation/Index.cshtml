@@ -43,7 +43,7 @@
                     setState();
                 });
             } else {
-                manager.signinRedirect({ scope: scope, response_type: response_type, prompt: 'none' }).then(x => {});
+                manager.signinRedirect({ scope: scope, response_type: response_type }).then(x => {});
             }
         }
 
