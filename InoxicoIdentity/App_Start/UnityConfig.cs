@@ -38,7 +38,7 @@ namespace InoxicoIdentity
         /// </remarks>
         public static void RegisterTypes(IUnityContainer container)
         {
-            container.RegisterSingleton<RefCodeRegistry>();
+            
         }
     }
 }

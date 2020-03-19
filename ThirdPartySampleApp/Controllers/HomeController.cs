@@ -13,7 +13,7 @@ namespace ThirdPartySampleApp.Controllers
 {
     public class HomeController : Controller
     {
-        private const string InoxicoCoreAuthenticateUrl = "https://localhost:44302/ThirdPartyIntegration/AuthenticateExternalUser";
+        private const string TargetAppBaseUrl = "https://localhost:44302";
 
         private static readonly HttpClient _httpClient = new HttpClient();
 
@@ -24,20 +24,20 @@ namespace ThirdPartySampleApp.Controllers
         }
 
         [Authorize]
-        public async Task<ActionResult> GoToInoxicoCore()
+        public async Task<ActionResult> GoToTargetApp()
         {
             // Make call to get redirect url.
             var authProperties = HttpContext.GetOwinContext().Authentication.AuthenticateAsync("Cookies").Result;
             var idToken = authProperties.Properties.Dictionary.First(x => x.Key == "id_token");
 
-            var redirectUrl = await AuthenticateUserToInoxicoCore(idToken.Value);
+            var redirectUrl = await AuthenticateUserToTargetApp(idToken.Value);
 
             return Redirect(redirectUrl);
         }
 
-        private async Task<string> AuthenticateUserToInoxicoCore(string idTokenValue)
+        private async Task<string> AuthenticateUserToTargetApp(string idTokenValue)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{InoxicoCoreAuthenticateUrl}?clientId=1234");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{TargetAppBaseUrl}/ThirdPartyIntegration/AuthenticateExternalUser?clientId=1234");
             request.Content = new StringContent(string.Empty);
             request.Headers.Add("id", idTokenValue);
             var response = await _httpClient.SendAsync(request);
@@ -51,14 +51,12 @@ namespace ThirdPartySampleApp.Controllers
         {
             ViewBag.Message = "You are logged in now. Here's your token:";
 
-            /*var user = User as ClaimsPrincipal;
-            var token = user.FindFirst("access_token");*/
-            /*if (token != null)
+            var user = User as ClaimsPrincipal;
+            var token = user.FindFirst("access_token");
+            if (token != null)
             {
                 ViewData["access_token"] = token.Value;
-            }*/
-
-            var authProperties = HttpContext.GetOwinContext().Authentication.AuthenticateAsync("Cookies").Result;
+            }
 
             return View();
         }

@@ -11,7 +11,7 @@ namespace InoxicoIdentity.Config
         {
             var users = new List<InMemoryUser>
             {
-                new InMemoryUser{Subject = "inoxicoUser1", Username = "bob", Password = "bob",
+                new InMemoryUser{Subject = "inoxicoUser1", Username = "bob", Password = "somerandompassword",
                     Claims = new Claim[]
                     {
                         new Claim(Constants.ClaimTypes.Name, "Bob Smith"),

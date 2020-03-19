@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "Intended Application";
+}
+@section scripts {
+    <script src="~/Content/oidc-client.js"></script>
+    <script>
+        var manager = new Oidc.UserManager({});
+        manager.getUser().then(user => {
+            if (user != null) {
+                document.getElementById('description').innerText = "Logged in";
+            }
+        })
+    </script>
+}
+
+<h2>Welcome to the Intended Application</h2>
+
+<span id="description">Expect Update</span>

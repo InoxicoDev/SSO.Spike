@@ -1,62 +1,88 @@
 ﻿using IdentityModel.Client;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace InoxicoTargetApp.Controllers
 {
     public class ThirdPartyIntegrationController : Controller
     {
-        private static string InoxicoIdentityStsClientAddress = "https://localhost:44301/connect/token";
+        private const string InoxicoStsAuthAddress = "https://localhost:44301/connect/authorize";
+        private const string ThirdPartyStsBaseAddress = "https://localhost:44303";
         private static readonly HttpClient _httpClient = new HttpClient();
 
         [HttpPost]
         public async Task<string> AuthenticateExternalUser(string clientId)
         {
-            var idToken = this.Request.Headers["id"];
+            try
+            {
+                var idToken = this.Request.Headers["id"];
 
-            var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:44301/api/ReferenceCode/{clientId}");
-            request.Headers.Add("id", idToken);
-            request.Content = new StringContent(string.Empty);
+                if (string.IsNullOrEmpty(idToken))
+                {
+                    throw new Exception("No ID Token supplied");
+                }
 
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+                var user = await ValidateToken(idToken);
+                if (user == null)
+                {
+                    throw new Exception("Invalid token");
+                }
 
-            var refCode = await response.Content.ReadAsStringAsync();
-            refCode = refCode.Replace("\"", string.Empty);
+                var externalUserId = user.Claims.Single(p => p.Type == "sub").Value;
 
-            return $"{this.Request.Url.Scheme}://{this.Request.Url.Authority}/ThirdPartyIntegration/AuthenticateExternalUserWithRefCode?refCode={refCode}";
+                var requestUrl = new RequestUrl(InoxicoStsAuthAddress);
+                var redirectUrl = requestUrl.CreateAuthorizeUrl(
+                    clientId: "external_authcode",
+                    responseType: "code",
+                    scope: "openid profile read write offline_access",
+                    prompt: "none",
+                    redirectUri: "https://localhost:44302/IntendedLocation",
+                    state: Guid.NewGuid().ToString(),
+                    nonce: Guid.NewGuid().ToString());
+
+                return redirectUrl;
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
         }
 
-        public async Task<ActionResult> AuthenticateExternalUserWithRefCode(string refCode)
+        private async Task<ClaimsPrincipal> ValidateToken(string token)
         {
-            var client = new TokenClient(
-                _httpClient,
-                new TokenClientOptions()
+            var url = $"{ThirdPartyStsBaseAddress}/.well-known/openid-configuration";
+            IConfigurationManager<OpenIdConnectConfiguration> configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(url, new OpenIdConnectConfigurationRetriever(), new HttpDocumentRetriever { RequireHttps = false /* BAD FOR PROD! */ });
+            OpenIdConnectConfiguration openIdConfig = await configurationManager.GetConfigurationAsync(CancellationToken.None);
+
+            TokenValidationParameters validationParameters =
+                new TokenValidationParameters
                 {
-                    Address = InoxicoIdentityStsClientAddress,
-                    ClientId = "external_ref_code_client",
-                    ClientSecret = "secret",
-                    Parameters = new Dictionary<string, string>
-                    {
-                        {"scope", "read write email"}
-                    }
-                });
+                    ValidIssuer = ThirdPartyStsBaseAddress,
+                    ValidAudiences = new[] { "third_party_client" },
+                    IssuerSigningKeys = openIdConfig.SigningKeys
+                };
 
-
-            var token = await client.RequestTokenAsync("refcode_grant", new Dictionary<string, string>
+            SecurityToken validatedToken;
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            try
             {
-                {"refCode", refCode}
-            });
-
-            // Embed token to user browser
-
-            return Redirect("/");
+                var user = handler.ValidateToken(token, validationParameters, out validatedToken);
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

@@ -12,9 +12,9 @@ namespace InoxicoIdentity.Config
             {
                 new Client
                 {
-                    ClientName = "External Ref Code Flow Client",
-                    ClientId = "external_ref_code_client",
-                    Flow = Flows.Custom,
+                    ClientName = "External Auth Code Flow Client",
+                    ClientId = "external_authcode",
+                    Flow = Flows.AuthorizationCode,
 
                     ClientSecrets = new List<Secret>
                     {
@@ -26,10 +26,10 @@ namespace InoxicoIdentity.Config
 
                     RedirectUris = new List<string>
                     {
-                        "https://localhost:44304/",
+                        "https://localhost:44302/IntendedLocation",
                     },
 
-                    AllowedCustomGrantTypes = new List<string> { "refcode_grant" },
+                    ClientUri = "https://identityserver.io",
 
                     AllowedScopes = new List<string>
                     {
@@ -41,7 +41,9 @@ namespace InoxicoIdentity.Config
                         "read",
                         "write"
                     },
-                    AllowClientCredentialsOnly = true,
+                    AllowClientCredentialsOnly = false,
+
+                    AccessTokenType = AccessTokenType.Jwt
                 },
                 
             };
