@@ -47,8 +47,8 @@ namespace InoxicoTargetApp.Controllers
                     scope: "openid profile read write offline_access",
                     prompt: "none",
                     redirectUri: "https://localhost:44302/IntendedLocation",
-                    state: Guid.NewGuid().ToString(),
-                    nonce: Guid.NewGuid().ToString());
+                    state: Guid.NewGuid().ToString("N"),
+                    nonce: Guid.NewGuid().ToString("N"));
 
                 return redirectUrl;
             }

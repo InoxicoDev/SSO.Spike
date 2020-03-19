@@ -8,7 +8,6 @@ namespace InoxicoTargetApp.Controllers
 {
     public class IntendedLocationController : Controller
     {
-        [Authorize]
         public ActionResult Index()
         {
             return View();

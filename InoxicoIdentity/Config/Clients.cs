@@ -12,6 +12,42 @@ namespace InoxicoIdentity.Config
             {
                 new Client
                 {
+                    ClientName = "Inoxico Login Client",
+                    ClientId = "inox_login",
+                    Flow = Flows.Implicit,
+
+                    RedirectUris = new List<string>
+                    {
+                        "https://localhost:44302/IntendedLocation"
+                    },
+
+                    PostLogoutRedirectUris = new List<string>
+                    {
+                        "https://localhost:44302/IntendedLocation"
+                    },
+
+                    AllowedScopes = new List<string>
+                    {
+                        Constants.StandardScopes.OpenId,
+                        Constants.StandardScopes.Profile,
+                        Constants.StandardScopes.Email,
+                        Constants.StandardScopes.Roles,
+                        Constants.StandardScopes.OfflineAccess,
+                        "read",
+                        "write"
+                    },
+                    AllowClientCredentialsOnly = false,
+                    RequireConsent = false,
+                    AllowRememberConsent = false,
+
+                    AllowedCorsOrigins = new List<string>{
+                        "https://localhost:44302"
+                    },
+
+                    AccessTokenType = AccessTokenType.Jwt
+                }
+                /*new Client
+                {
                     ClientName = "External Auth Code Flow Client",
                     ClientId = "external_authcode",
                     Flow = Flows.AuthorizationCode,
@@ -44,8 +80,7 @@ namespace InoxicoIdentity.Config
                     AllowClientCredentialsOnly = false,
 
                     AccessTokenType = AccessTokenType.Jwt
-                },
-                
+                },*/
             };
         }
     }

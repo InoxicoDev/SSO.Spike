@@ -5,15 +5,62 @@
 @section scripts {
     <script src="~/Content/oidc-client.js"></script>
     <script>
-        var manager = new Oidc.UserManager({});
-        manager.getUser().then(user => {
-            if (user != null) {
-                document.getElementById('description').innerText = "Logged in";
+        Oidc.Log.logger = console;
+        Oidc.Log.level = Oidc.Log.NONE;
+        var scope = 'openid profile read write offline_access';
+        var response_type = 'id_token token';
+
+        var manager = new Oidc.UserManager({
+            post_logout_redirect_uri: 'https://localhost:44302/IntendedLocation',
+            redirect_uri: 'https://localhost:44302/IntendedLocation',
+            authority: 'https://localhost:44301',
+            client_id: 'inox_login',
+            scope: scope,
+            response_type: response_type,
+            automaticSilentRenew: false,
+            loadUserInfo: true
+        });
+
+        var isLoggedIn = false;
+        var user = null;
+
+        manager.getUser().then(u => {
+            user = u;
+            isLoggedIn = user != null;
+            setState();
+        });
+
+        manager.signinRedirectCallback().then(u => {
+                user = u;
+                isLoggedIn = user != null;
+                setState();
+            });
+
+        var loginLogoutButton = document.getElementById('loginLogoutButton');
+        loginLogoutButton.onclick = function (ev) {
+            if (isLoggedIn) {
+                manager.signoutRedirect({}).then(x => {
+                    isLoggedIn = false;
+                    setState();
+                });
+            } else {
+                manager.signinRedirect({ scope: scope, response_type: response_type }).then(x => {
+                    isLoggedIn = true;
+                    setState();
+                });
             }
-        })
+        }
+
+        function setState() {
+            if (isLoggedIn) {
+                loginLogoutButton.innerText = "Logout";
+            } else {
+                loginLogoutButton.innerText = "Login";
+            }
+        }
     </script>
 }
 
 <h2>Welcome to the Intended Application</h2>
 
-<span id="description">Expect Update</span>
+<button id="loginLogoutButton">Login</button>
