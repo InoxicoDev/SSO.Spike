@@ -21,41 +21,50 @@
             loadUserInfo: true
         });
 
-        var isLoggedIn = false;
         var user = null;
 
         manager.getUser().then(u => {
             user = u;
-            isLoggedIn = user != null;
             setState();
         });
 
         manager.signinRedirectCallback().then(u => {
                 user = u;
-                isLoggedIn = user != null;
                 setState();
             });
 
         var loginLogoutButton = document.getElementById('loginLogoutButton');
+        var tokenInfoSpan = document.getElementById('tokenInfoSpan');
+
         loginLogoutButton.onclick = function (ev) {
-            if (isLoggedIn) {
+            if (user != null) {
                 manager.signoutRedirect({}).then(x => {
-                    isLoggedIn = false;
+                    user = null;
                     setState();
                 });
             } else {
-                manager.signinRedirect({ scope: scope, response_type: response_type }).then(x => {
-                    isLoggedIn = true;
-                    setState();
-                });
+                manager.signinRedirect({ scope: scope, response_type: response_type }).then(x => {});
             }
         }
 
         function setState() {
-            if (isLoggedIn) {
+            if (user != null) {
                 loginLogoutButton.innerText = "Logout";
             } else {
                 loginLogoutButton.innerText = "Login";
+            }
+            displayToken();
+        }
+
+        function displayToken() {
+            if (user != null) {
+                var access_token = user.access_token;
+                var parts = access_token.split('.');
+                var middlePartText = atob(parts[1])
+                tokenInfoSpan.innerText = middlePartText;
+
+            } else {
+                tokenInfoSpan.innerText = "";
             }
         }
     </script>
@@ -64,3 +73,5 @@
 <h2>Welcome to the Intended Application</h2>
 
 <button id="loginLogoutButton">Login</button>
+
+<span id="tokenInfoSpan"></span>
