@@ -44,7 +44,8 @@ namespace InoxicoIdentity.Config
                         "https://localhost:44302"
                     },
 
-                    AccessTokenType = AccessTokenType.Jwt
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AccessTokenLifetime = 3600,
                 }
                 /*new Client
                 {

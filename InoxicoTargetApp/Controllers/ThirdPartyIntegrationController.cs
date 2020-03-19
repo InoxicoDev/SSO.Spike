@@ -46,7 +46,7 @@ namespace InoxicoTargetApp.Controllers
                     responseType: "id_token token",
                     scope: "openid profile read write offline_access",
                     redirectUri: "https://localhost:44302/IntendedLocation",
-                    state: "this_is_my_state",
+                    state: Guid.NewGuid().ToString("N"),
                     nonce: Guid.NewGuid().ToString("N"),
                     acrValues: "idp:ThirdParty");
 

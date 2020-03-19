@@ -47,7 +47,7 @@ namespace InoxicoIdentity.IdentityProviders
                 Request.Path +
                 Request.QueryString;
 
-            var redirectUri =
+            var visitUri =
                 baseUri +
                 Options.CallbackPath;
 
@@ -62,10 +62,11 @@ namespace InoxicoIdentity.IdentityProviders
 
             var state = Options.StateDataFormat.Protect(properties);
 
-            var authorizationEndpoint = new StringBuilder(redirectUri);
+            var authorizationEndpoint = new StringBuilder(visitUri);
+            authorizationEndpoint.Append($"?redirect_uri=https://localhost:44302/IntendedLocation");
             if (!string.IsNullOrEmpty(state))
             {
-                authorizationEndpoint.Append("?state=" + Uri.EscapeDataString(state));
+                authorizationEndpoint.Append("&state=" + Uri.EscapeDataString(state));
             }
 
             /*var authorizationEndpoint =
@@ -98,6 +99,12 @@ namespace InoxicoIdentity.IdentityProviders
                     return null;
                 }
 
+                // OAuth2 10.12 CSRF
+                if (!ValidateCorrelationId(properties, _logger))
+                {
+                    return new AuthenticationTicket(null, properties);
+                }
+
                 var context = new ThirdPartyAuthenticatedContext(Context)
                 {
                     Identity = new ClaimsIdentity(
@@ -107,10 +114,7 @@ namespace InoxicoIdentity.IdentityProviders
                 };
                 context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "inoxicoUser1", XmlSchemaString, Options.AuthenticationType));
 
-                context.Properties = new AuthenticationProperties
-                {
-                    RedirectUri = "https://localhost:44302/IntendedLocation"
-                };
+                context.Properties = properties;
 
                 await Options.Provider.Authenticated(context);
 
