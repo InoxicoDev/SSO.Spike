@@ -224,6 +224,14 @@
     <Compile Include="Config\Clients.cs" />
     <Compile Include="Config\Scopes.cs" />
     <Compile Include="Config\Users.cs" />
+    <Compile Include="IdentityProviders\IThirdPartyAuthenticationProvider.cs" />
+    <Compile Include="IdentityProviders\ThirdPartyAuthenticatedContext.cs" />
+    <Compile Include="IdentityProviders\ThirdPartyAuthenticationExtensions.cs" />
+    <Compile Include="IdentityProviders\ThirdPartyAuthenticationHandler.cs" />
+    <Compile Include="IdentityProviders\ThirdPartyAuthenticationMiddleware.cs" />
+    <Compile Include="IdentityProviders\ThirdPartyAuthenticationOptions.cs" />
+    <Compile Include="IdentityProviders\ThirdPartyAuthenticationProvider.cs" />
+    <Compile Include="IdentityProviders\ThirdPartyReturnEndpointContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

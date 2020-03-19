@@ -42,13 +42,13 @@ namespace InoxicoTargetApp.Controllers
 
                 var requestUrl = new RequestUrl(InoxicoStsAuthAddress);
                 var redirectUrl = requestUrl.CreateAuthorizeUrl(
-                    clientId: "external_authcode",
-                    responseType: "code",
+                    clientId: "inox_login",
+                    responseType: "id_token token",
                     scope: "openid profile read write offline_access",
-                    prompt: "none",
                     redirectUri: "https://localhost:44302/IntendedLocation",
-                    state: Guid.NewGuid().ToString("N"),
-                    nonce: Guid.NewGuid().ToString("N"));
+                    state: "this_is_my_state",
+                    nonce: Guid.NewGuid().ToString("N"),
+                    acrValues: "idp:ThirdParty");
 
                 return redirectUrl;
             }
