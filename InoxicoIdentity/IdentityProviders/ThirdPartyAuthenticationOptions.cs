@@ -7,7 +7,7 @@ namespace InoxicoIdentity.IdentityProviders
     {
         public ThirdPartyAuthenticationOptions() : base("ThirdParty")
         {
-            AuthenticationMode = AuthenticationMode.Active;
+            AuthenticationMode = AuthenticationMode.Passive;
             CallbackPath = new PathString("/third-party");
         }
 
@@ -17,6 +17,9 @@ namespace InoxicoIdentity.IdentityProviders
 
         public IThirdPartyAuthenticationProvider Provider { get; set; }
 
+        /// <summary>
+        /// Id Provider Url Path to finalize processing authentication
+        /// </summary>
         public PathString CallbackPath { get; set; }
     }
 }

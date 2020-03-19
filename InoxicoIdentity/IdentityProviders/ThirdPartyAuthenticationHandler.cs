@@ -23,61 +23,61 @@ namespace InoxicoIdentity.IdentityProviders
             _logger = logger;
         }
 
-        protected override async Task ApplyResponseChallengeAsync()
+        /// <summary>
+        /// For AuthenticationMode = Passive, this gets invoked first when any request comes in.
+        /// The idea is to filter out all requests except the ones that contain our configured
+        /// CallbackPath path names (i.e. /third-party) in the incoming URL Request.
+        /// This should get invoked by the 3rd party STS when the user is successfully authenticated.
+        /// </summary>
+        public override async Task<bool> InvokeAsync()
         {
-            if (Response.StatusCode != 401)
+            if (!Options.CallbackPath.HasValue || Options.CallbackPath != Request.Path)
             {
-                return;
+                return false;
             }
 
-            var challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
-            if (challenge == null)
+            AuthenticationTicket model = await AuthenticateAsync();
+            if (model == null)
             {
-                return;
+                _logger.WriteWarning("Invalid return state, unable to redirect.");
+                base.Response.StatusCode = 500;
+                return true;
             }
 
-            var baseUri =
-                Request.Scheme +
-                Uri.SchemeDelimiter +
-                Request.Host +
-                Request.PathBase;
-
-            var currentUri =
-                baseUri +
-                Request.Path +
-                Request.QueryString;
-
-            var visitUri =
-                baseUri +
-                Options.CallbackPath;
-
-            var properties = challenge.Properties;
-            if (string.IsNullOrEmpty(properties.RedirectUri))
+            var context = new ThirdPartyReturnEndpointContext(base.Context, model)
             {
-                properties.RedirectUri = currentUri;
-            }
+                SignInAsAuthenticationType = base.Options.SignInAsAuthenticationType,
+                RedirectUri = model.Properties.RedirectUri
+            };
+            model.Properties.RedirectUri = null;
+            await base.Options.Provider.ReturnEndpoint(context);
 
-            // OAuth2 10.12 CSRF
-            GenerateCorrelationId(properties);
-
-            var state = Options.StateDataFormat.Protect(properties);
-
-            var authorizationEndpoint = new StringBuilder(visitUri);
-            authorizationEndpoint.Append($"?redirect_uri=https://localhost:44302/IntendedLocation");
-            if (!string.IsNullOrEmpty(state))
+            if (context.SignInAsAuthenticationType != null && context.Identity != null)
             {
-                authorizationEndpoint.Append("&state=" + Uri.EscapeDataString(state));
+                ClaimsIdentity claimsIdentity = context.Identity;
+                if (!string.Equals(claimsIdentity.AuthenticationType, context.SignInAsAuthenticationType, StringComparison.Ordinal))
+                {
+                    claimsIdentity = new ClaimsIdentity(claimsIdentity.Claims, context.SignInAsAuthenticationType, claimsIdentity.NameClaimType, claimsIdentity.RoleClaimType);
+                }
+                base.Context.Authentication.SignIn(context.Properties, claimsIdentity);
             }
-
-            /*var authorizationEndpoint =
-                redirectUri +
-                "?client_id=" + Uri.EscapeDataString(Request.Query["client_id"]) +
-                "&scope=" + Uri.EscapeDataString(Request.Query["scope"]) +
-                "&state=" + Uri.EscapeDataString(state);*/
-
-            Response.Redirect(authorizationEndpoint.ToString());
+            if (!context.IsRequestCompleted && context.RedirectUri != null)
+            {
+                if (context.Identity == null)
+                {
+                    context.RedirectUri = WebUtilities.AddQueryString(context.RedirectUri, "error", "access_denied");
+                }
+                base.Response.Redirect(context.RedirectUri);
+                context.RequestCompleted();
+            }
+            return context.IsRequestCompleted;
         }
 
+        /// <summary>
+        /// For AuthenticationMode = Active, this gets invoked first when any request comes in.
+        /// But its best to keep it Passive for this logic to work.
+        /// This needs to go and fetch the identity claims from the 3rd party STS.
+        /// </summary>
         protected override async Task<AuthenticationTicket> AuthenticateCoreAsync()
         {
             AuthenticationProperties properties = null;
@@ -128,48 +128,60 @@ namespace InoxicoIdentity.IdentityProviders
             return new AuthenticationTicket(null, properties);
         }
 
-        public override async Task<bool> InvokeAsync()
+        /// <summary>
+        /// This gets invoked last when the request is done.
+        /// This is a hookin point for redirecting the user to the 3rd
+        /// party STS once it picks up that its a auth challenge that
+        /// needs to take place. That in turn should redirect to our
+        /// CallbackPath when that STS authentication was successful.
+        /// </summary>
+        protected override async Task ApplyResponseChallengeAsync()
         {
-            if (!Options.CallbackPath.HasValue || Options.CallbackPath != Request.Path)
+            if (Response.StatusCode != 401)
             {
-                return false;
+                return;
             }
 
-            AuthenticationTicket model = await AuthenticateAsync();
-            if (model == null)
+            var challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
+            if (challenge == null)
             {
-                _logger.WriteWarning("Invalid return state, unable to redirect.");
-                base.Response.StatusCode = 500;
-                return true;
+                return;
             }
 
-            var context = new ThirdPartyReturnEndpointContext(base.Context, model)
-            {
-                SignInAsAuthenticationType = base.Options.SignInAsAuthenticationType,
-                RedirectUri = model.Properties.RedirectUri
-            };
-            model.Properties.RedirectUri = null;
-            await base.Options.Provider.ReturnEndpoint(context);
+            var baseUri =
+                Request.Scheme +
+                Uri.SchemeDelimiter +
+                Request.Host +
+                Request.PathBase;
 
-            if (context.SignInAsAuthenticationType != null && context.Identity != null)
+            var currentUri =
+                baseUri +
+                Request.Path +
+                Request.QueryString;
+
+            var visitUri =
+                baseUri +
+                Options.CallbackPath;
+
+            var properties = challenge.Properties;
+            if (string.IsNullOrEmpty(properties.RedirectUri))
             {
-                ClaimsIdentity claimsIdentity = context.Identity;
-                if (!string.Equals(claimsIdentity.AuthenticationType, context.SignInAsAuthenticationType, StringComparison.Ordinal))
-                {
-                    claimsIdentity = new ClaimsIdentity(claimsIdentity.Claims, context.SignInAsAuthenticationType, claimsIdentity.NameClaimType, claimsIdentity.RoleClaimType);
-                }
-                base.Context.Authentication.SignIn(context.Properties, claimsIdentity);
+                properties.RedirectUri = currentUri;
             }
-            if (!context.IsRequestCompleted && context.RedirectUri != null)
+
+            // OAuth2 10.12 CSRF
+            GenerateCorrelationId(properties);
+
+            var state = Options.StateDataFormat.Protect(properties);
+
+            var authorizationEndpoint = new StringBuilder(visitUri);
+            authorizationEndpoint.Append($"?redirect_uri=https://localhost:44302/IntendedLocation");
+            if (!string.IsNullOrEmpty(state))
             {
-                if (context.Identity == null)
-                {
-                    context.RedirectUri = WebUtilities.AddQueryString(context.RedirectUri, "error", "access_denied");
-                }
-                base.Response.Redirect(context.RedirectUri);
-                context.RequestCompleted();
+                authorizationEndpoint.Append("&state=" + Uri.EscapeDataString(state));
             }
-            return context.IsRequestCompleted;
+
+            Response.Redirect(authorizationEndpoint.ToString());
         }
     }
 }
