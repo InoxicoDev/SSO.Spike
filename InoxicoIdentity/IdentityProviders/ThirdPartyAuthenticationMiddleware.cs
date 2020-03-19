@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin;
 using Microsoft.Owin.Logging;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataHandler;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.Infrastructure;
@@ -21,7 +22,9 @@ namespace InoxicoIdentity.IdentityProviders
             _logger = app.CreateLogger<ThirdPartyAuthenticationMiddleware>();
 
             if (Options.Provider == null)
+            {
                 Options.Provider = new ThirdPartyAuthenticationProvider();
+            }
 
             if (Options.StateDataFormat == null)
             {
@@ -29,6 +32,11 @@ namespace InoxicoIdentity.IdentityProviders
                     typeof(ThirdPartyAuthenticationMiddleware).FullName,
                     Options.AuthenticationType, "v1");
                 Options.StateDataFormat = new PropertiesDataFormat(dataProtector);
+            }
+
+            if (string.IsNullOrEmpty(Options.SignInAsAuthenticationType))
+            {
+                Options.SignInAsAuthenticationType = app.GetDefaultSignInAsAuthenticationType();
             }
         }
 

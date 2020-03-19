@@ -6,6 +6,7 @@ namespace InoxicoIdentity.IdentityProviders
     {
         public ThirdPartyAuthenticationOptions() : base("ThirdParty")
         {
+            AuthenticationMode = AuthenticationMode.Active;
         }
 
         public string SignInAsAuthenticationType { get; set; }

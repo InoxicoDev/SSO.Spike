@@ -43,7 +43,7 @@ namespace InoxicoIdentity
 
         private static void ConfigureAdditionalIdentityProviders(IAppBuilder app, string signInAsType)
         {
-            app.UseThirdPartyAuthentication(new ThirdPartyAuthenticationOptions { AuthenticationType = "ThirdParty", SignInAsAuthenticationType = signInAsType });
+            app.UseThirdPartyAuthentication(new ThirdPartyAuthenticationOptions { SignInAsAuthenticationType = signInAsType });
         }
     }
 }
