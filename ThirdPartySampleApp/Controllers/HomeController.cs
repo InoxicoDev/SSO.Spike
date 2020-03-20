@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using IdentityModel.Client;
-using Microsoft.Owin.Security;
+using Common;
 
 namespace ThirdPartySampleApp.Controllers
 {
     public class HomeController : Controller
     {
-        private const string TargetAppBaseUrl = "https://localhost:44302";
-
         private static readonly HttpClient _httpClient = new HttpClient();
 
         [Authorize]
@@ -37,7 +33,7 @@ namespace ThirdPartySampleApp.Controllers
 
         private async Task<string> AuthenticateUserToTargetApp(string idTokenValue)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{TargetAppBaseUrl}/ThirdPartyIntegration/AuthenticateExternalUser?clientId=1234");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{Addresses.InoxicoTargetAppAuth}?clientId={Identifiers.ThirdPartyClientId}");
             request.Content = new StringContent(string.Empty);
             request.Headers.Add("id", idTokenValue);
             var response = await _httpClient.SendAsync(request);

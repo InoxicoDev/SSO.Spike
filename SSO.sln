@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InoxicoIdentity", "InoxicoI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InoxicoTargetApp", "InoxicoTargetApp\InoxicoTargetApp.csproj", "{D7324F33-E906-44AE-B0D7-36CDBC33DC14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{049EB310-1492-4A00-8C51-EF526172CDAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{D7324F33-E906-44AE-B0D7-36CDBC33DC14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7324F33-E906-44AE-B0D7-36CDBC33DC14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7324F33-E906-44AE-B0D7-36CDBC33DC14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{049EB310-1492-4A00-8C51-EF526172CDAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{049EB310-1492-4A00-8C51-EF526172CDAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{049EB310-1492-4A00-8C51-EF526172CDAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{049EB310-1492-4A00-8C51-EF526172CDAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

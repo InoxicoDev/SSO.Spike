@@ -224,7 +224,7 @@
     <Compile Include="Config\Clients.cs" />
     <Compile Include="Config\Scopes.cs" />
     <Compile Include="Config\Users.cs" />
-    <Compile Include="CustomUserService.cs" />
+    <Compile Include="Services\CustomUserService.cs" />
     <Compile Include="IdentityProviders\IThirdPartyAuthenticationProvider.cs" />
     <Compile Include="IdentityProviders\ThirdPartyAuthenticatedContext.cs" />
     <Compile Include="IdentityProviders\ThirdPartyAuthenticationExtensions.cs" />
@@ -246,7 +246,12 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{049eb310-1492-4a00-8c51-ef526172cdad}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

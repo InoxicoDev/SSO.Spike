@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace InoxicoIdentity
+namespace InoxicoIdentity.Services
 {
     public class CustomUserService : InMemoryUserService
     {

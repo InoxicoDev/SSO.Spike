@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common;
 using IdentityServer3.Core;
 using IdentityServer3.Core.Models;
 
@@ -13,7 +14,7 @@ namespace ThirdPartyIdentity.Config
                 new Client
                 {
                     ClientName = "Third Party Client",
-                    ClientId = "third_party_client",
+                    ClientId = OAuth.ThirdPartyAudience,
                     ClientSecrets = new List<Secret>
                     {
                         new Secret("secret".Sha256())
@@ -36,10 +37,10 @@ namespace ThirdPartyIdentity.Config
 
                     RedirectUris = new List<string>
                     {
-                        "https://localhost:44304/"
+                        Addresses.ThirdPartyAppBase + "/"
                     },
 
-                    LogoutUri = "http://localhost:44304/Home/SignoutCleanup",
+                    LogoutUri = $"{Addresses.ThirdPartyAppBase}/Home/SignoutCleanup",
                     LogoutSessionRequired = true,
                     AccessTokenLifetime = 18000
                 },

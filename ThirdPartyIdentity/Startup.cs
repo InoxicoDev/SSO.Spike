@@ -16,7 +16,7 @@ namespace ThirdPartyIdentity
 
             var options = new IdentityServerOptions
             {
-                SiteName = "Third Party Sample Identity Server",
+                SiteName = "Third Party Identity Server",
 
                 SigningCertificate = Certificate.Get(),
                 Factory = factory,

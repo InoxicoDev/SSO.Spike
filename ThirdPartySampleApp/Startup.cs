@@ -4,13 +4,12 @@ using Owin;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using IdentityModel;
+using Common;
 
 namespace ThirdPartySampleApp
 {
     public class Startup
     {
-        private const string IdSvrBaseAddress = "https://localhost:44303/";
-
         public void Configuration(IAppBuilder app)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap = new Dictionary<string, string>();
@@ -22,10 +21,10 @@ namespace ThirdPartySampleApp
 
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
             {
-                ClientId = "third_party_client",
+                ClientId = OAuth.ThirdPartyAudience,
                 ClientSecret = "secret".ToSha256(),
-                Authority = IdSvrBaseAddress,
-                RedirectUri = "https://localhost:44304/",
+                Authority = Addresses.ThirdPartySTSBase,
+                RedirectUri = Addresses.ThirdPartyAppBase + "/",
                 ResponseType = "id_token token",
                 Scope = "openid email",
 

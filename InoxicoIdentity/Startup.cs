@@ -4,6 +4,7 @@ using IdentityServer3.Core.Services;
 using InoxicoIdentity.App_Start;
 using InoxicoIdentity.Config;
 using InoxicoIdentity.IdentityProviders;
+using InoxicoIdentity.Services;
 using Owin;
 using Serilog;
 
@@ -30,7 +31,7 @@ namespace InoxicoIdentity
 
             var options = new IdentityServerOptions
             {
-                SiteName = "Inoxico Sample Identity Server",
+                SiteName = "Inoxico Identity Server",
 
                 SigningCertificate = Certificate.Get(),
                 Factory = factory,

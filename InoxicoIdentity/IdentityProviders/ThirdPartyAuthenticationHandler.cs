@@ -14,12 +14,14 @@ using System.Threading;
 using System.Collections.Concurrent;
 using Microsoft.Owin;
 using System.Linq;
+using Common;
 
 namespace InoxicoIdentity.IdentityProviders
 {
     public class ThirdPartyAuthenticationHandler : AuthenticationHandler<ThirdPartyAuthenticationOptions>
     {
         private const string XmlSchemaString = "http://www.w3.org/2001/XMLSchema#string";
+        private const string ThirdPartyStateKey = "thirdparty_state";
 
         private static readonly ConcurrentDictionary<string, StateEntry> RedirectContextHolder = new ConcurrentDictionary<string, StateEntry>();
 
@@ -112,8 +114,8 @@ namespace InoxicoIdentity.IdentityProviders
                     return new AuthenticationTicket(null, properties);
                 }
 
-                var thirdPartyState = properties.Dictionary["thirdparty_state"];
-                properties.Dictionary.Remove("thirdparty_state");
+                var thirdPartyState = properties.Dictionary[ThirdPartyStateKey];
+                properties.Dictionary.Remove(ThirdPartyStateKey);
                 var decodedThirdPartyState = DecodeState(thirdPartyState);
 
                 var thirdPartyClaims = await ValidateToken(decodedThirdPartyState.ClientId, decodedThirdPartyState.Token);
@@ -140,6 +142,7 @@ namespace InoxicoIdentity.IdentityProviders
 
             return new AuthenticationTicket(null, properties);
         }
+
 
         /// <summary>
         /// This gets invoked last when the request is done.
@@ -191,7 +194,7 @@ namespace InoxicoIdentity.IdentityProviders
             GenerateCorrelationId(properties);
 
             var redirectContext = GetRedirectedContext();
-            properties.Dictionary.Add("thirdparty_state", redirectContext.GetReceivedRawState());
+            properties.Dictionary.Add(ThirdPartyStateKey, redirectContext.GetReceivedRawState());
 
             var state = Options.StateDataFormat.Protect(properties);
 
@@ -242,15 +245,14 @@ namespace InoxicoIdentity.IdentityProviders
 
         private async Task<ClaimsPrincipal> ValidateToken(string clientId, string token)
         {
-            const string ThirdPartyStsBaseAddress = "https://localhost:44303";
-            var url = $"{ThirdPartyStsBaseAddress}/.well-known/openid-configuration";
+            var url = $"{Addresses.ThirdPartySTSBase}/.well-known/openid-configuration";
             var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(url, new OpenIdConnectConfigurationRetriever());
             var openIdConfig = await configurationManager.GetConfigurationAsync(CancellationToken.None);
 
             var validationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = ThirdPartyStsBaseAddress,
-                    ValidAudiences = new[] { "third_party_client" },
+                    ValidIssuer = Addresses.ThirdPartySTSBase,
+                    ValidAudiences = new[] { OAuth.ThirdPartyAudience },
                     IssuerSigningKeys = openIdConfig.SigningKeys
                 };
 
