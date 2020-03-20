@@ -20,4 +20,4 @@ The Third Party application needs to connect to a Service exposed by the Inoxico
 What is not addressed
 ===
 
-The access token expiry is not handled for 3rd party users. So those users will have to navigate back to the 3rd party app to log back in to the Intended application.
+The access token expiry is not handled for 3rd party users as well as on logout. So those users will have to navigate back to the 3rd party app to log back in to the Intended application.
