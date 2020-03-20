@@ -224,6 +224,7 @@
     <Compile Include="Config\Clients.cs" />
     <Compile Include="Config\Scopes.cs" />
     <Compile Include="Config\Users.cs" />
+    <Compile Include="CustomUserService.cs" />
     <Compile Include="IdentityProviders\IThirdPartyAuthenticationProvider.cs" />
     <Compile Include="IdentityProviders\ThirdPartyAuthenticatedContext.cs" />
     <Compile Include="IdentityProviders\ThirdPartyAuthenticationExtensions.cs" />

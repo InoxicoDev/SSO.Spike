@@ -26,6 +26,8 @@ namespace InoxicoIdentity
                 .UseInMemoryScopes(Scopes.Get())
                 .UseInMemoryUsers(Users.Get());
 
+            factory.UserService = new Registration<IUserService, CustomUserService>();
+
             var options = new IdentityServerOptions
             {
                 SiteName = "Inoxico Sample Identity Server",
