@@ -3,12 +3,19 @@ using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading;
+using System.Collections.Concurrent;
+using Microsoft.Owin;
+using System.Linq;
+using IdentityServer3.Core.Services;
+using IdentityServer3.Core.Extensions;
 
 namespace InoxicoIdentity.IdentityProviders
 {
@@ -16,11 +23,26 @@ namespace InoxicoIdentity.IdentityProviders
     {
         private const string XmlSchemaString = "http://www.w3.org/2001/XMLSchema#string";
 
+        private static readonly ConcurrentDictionary<string, StateEntry> AuthStateHolder = new ConcurrentDictionary<string, StateEntry>();
+
         private readonly ILogger _logger;
 
         public ThirdPartyAuthenticationHandler(ILogger logger)
         {
             _logger = logger;
+        }
+
+        public IUserService UserService
+        {
+            get
+            {
+                var userService = base.Context?.Environment?.ResolveDependency<IUserService>();
+                if (userService == null)
+                {
+                    return null;
+                }
+                return userService;
+            }
         }
 
         /// <summary>
@@ -137,6 +159,11 @@ namespace InoxicoIdentity.IdentityProviders
         /// </summary>
         protected override async Task ApplyResponseChallengeAsync()
         {
+            if (IsAuthRequestWithLoginRedirect(out string[] location))
+            {
+                StoreRequestWithLoginRedirectDetails(location);
+            }
+
             if (Response.StatusCode != 401)
             {
                 return;
@@ -182,6 +209,95 @@ namespace InoxicoIdentity.IdentityProviders
             }
 
             Response.Redirect(authorizationEndpoint.ToString());
+        }
+
+        private bool IsAuthRequestWithLoginRedirect(out string[] location)
+        {
+            location = null;
+            return Request.Path.Value == "/connect/authorize" && Response.Headers.TryGetValue("Location", out location);
+        }
+
+        private void StoreRequestWithLoginRedirectDetails(string[] location)
+        {
+            AuthStateHolder.AddOrUpdate(location.First(), new StateEntry(Request.Query), (x, y) => new StateEntry(Request.Query));
+            var now = DateTime.Now;
+            foreach (var entry in AuthStateHolder.Where(p => p.Value.Expire <= now).ToArray())
+            {
+                AuthStateHolder.TryRemove(entry.Key, out StateEntry val);
+            }
+        }
+
+        private IReadableStringCollection GetLoginState()
+        {
+            if(!AuthStateHolder.TryGetValue(Request.Uri.AbsoluteUri, out StateEntry entry))
+            {
+                return null;
+            }
+
+            if (entry.Expire <= DateTime.Now)
+            {
+                AuthStateHolder.TryRemove(Request.Uri.AbsoluteUri, out StateEntry val);
+                return null;
+            }
+
+            return entry.KeyValuePairs;
+        }
+
+        private const string ThirdPartyStsBaseAddress = "https://localhost:44303";
+
+        private async Task<ClaimsPrincipal> ValidateToken(string token)
+        {
+            var url = $"{ThirdPartyStsBaseAddress}/.well-known/openid-configuration";
+            var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(url, new OpenIdConnectConfigurationRetriever());
+            var openIdConfig = await configurationManager.GetConfigurationAsync(CancellationToken.None);
+
+            var validationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = ThirdPartyStsBaseAddress,
+                    ValidAudiences = new[] { "third_party_client" },
+                    IssuerSigningKeys = openIdConfig.SigningKeys
+                };
+
+            var handler = new JwtSecurityTokenHandler();
+            try
+            {
+                var user = handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private static (string ClientId, string Token) DecodeState(string encodedState)
+        {
+            if(encodedState == null)
+            {
+                return (null, null);
+            }
+
+            var decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(encodedState));
+            var parts = decodedString.Split(';');
+
+            if (parts.Length != 2)
+            {
+                return (null, null);
+            }
+
+            return (parts[0], parts[1]);
+        }
+
+        private class StateEntry
+        {
+            public StateEntry(IReadableStringCollection keyValuePairs)
+            {
+                KeyValuePairs = keyValuePairs;
+                Expire = DateTime.Now.AddMinutes(5);
+            }
+
+            public IReadableStringCollection KeyValuePairs { get; }
+            public DateTime Expire { get; private set; }
         }
     }
 }
