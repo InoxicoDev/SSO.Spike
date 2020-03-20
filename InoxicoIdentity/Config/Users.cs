@@ -11,7 +11,11 @@ namespace InoxicoIdentity.Config
         {
             var users = new List<InMemoryUser>
             {
-                new InMemoryUser{Subject = "inoxicoUser1", Username = "bob", Password = "bob",
+                new InMemoryUser
+                {
+                    Subject = "inoxicoUser1", Username = "bob", Password = "bob",
+                    Provider = "ThirdParty",
+                    ProviderId = "thirdPartyUser1",
                     Claims = new Claim[]
                     {
                         new Claim(Constants.ClaimTypes.Name, "Bob Smith"),
@@ -19,7 +23,6 @@ namespace InoxicoIdentity.Config
                         new Claim(Constants.ClaimTypes.FamilyName, "Smith"),
                         new Claim(Constants.ClaimTypes.Email, "bob@email.com"),
                         new Claim(Constants.ClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                        new Claim("ExternalUserId", "thirdPartyUser1")
                     }
                 }
             };
