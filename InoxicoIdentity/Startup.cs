@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Common;
 using IdentityServer3.Core.Configuration;
 using IdentityServer3.Core.Services;
 using InoxicoIdentity.App_Start;
@@ -46,7 +48,13 @@ namespace InoxicoIdentity
 
         private static void ConfigureAdditionalIdentityProviders(IAppBuilder app, string signInAsType)
         {
-            app.UseThirdPartyAuthentication(new ThirdPartyAuthenticationOptions { SignInAsAuthenticationType = signInAsType });
+            app.UseThirdPartyAuthentication(new ThirdPartyAuthenticationOptions(signInAsType)
+            {
+                ThirdParties = new List<ThirdPartyEntry>
+                {
+                    new ThirdPartyEntry(Identifiers.ThirdPartyClientId, Addresses.ThirdPartySTSBase, Addresses.ThirdPartySTSBase, OAuth.ThirdPartyAudience)
+                }
+            });
         }
     }
 }

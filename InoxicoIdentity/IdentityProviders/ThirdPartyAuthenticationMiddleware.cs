@@ -5,6 +5,7 @@ using Microsoft.Owin.Security.DataHandler;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.Infrastructure;
 using Owin;
+using System;
 
 namespace InoxicoIdentity.IdentityProviders
 {
@@ -16,6 +17,11 @@ namespace InoxicoIdentity.IdentityProviders
             : base(next, options)
         {
             _logger = app.CreateLogger<ThirdPartyAuthenticationMiddleware>();
+
+            if (options.ThirdParties.Count == 0)
+            {
+                throw new Exception("No Third Parties configured for Third Party Authentication");
+            }
 
             if (Options.Provider == null)
             {

@@ -245,14 +245,20 @@ namespace InoxicoIdentity.IdentityProviders
 
         private async Task<ClaimsPrincipal> ValidateToken(string clientId, string token)
         {
-            var url = $"{Addresses.ThirdPartySTSBase}/.well-known/openid-configuration";
+            var thirdPartyEntry = Options.ThirdParties.SingleOrDefault(p => p.ClientId == clientId);
+            if (thirdPartyEntry == null)
+            {
+                throw new Exception($"Unknown ClientId {clientId}");
+            }
+
+            var url = $"{thirdPartyEntry.AddressSTS}/.well-known/openid-configuration";
             var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(url, new OpenIdConnectConfigurationRetriever());
             var openIdConfig = await configurationManager.GetConfigurationAsync(CancellationToken.None);
 
             var validationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = Addresses.ThirdPartySTSBase,
-                    ValidAudiences = new[] { OAuth.ThirdPartyAudience },
+                    ValidIssuer = thirdPartyEntry.Issuer,
+                    ValidAudiences = new[] { thirdPartyEntry.Audience },
                     IssuerSigningKeys = openIdConfig.SigningKeys
                 };
 
