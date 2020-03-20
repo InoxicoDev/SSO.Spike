@@ -2,6 +2,8 @@
 
 This project is a proof of concept in order to verify that a Third Party user coming from a Third Party application can log in to an Inoxico application without having to log in to Inoxico having a Single Signon experience.
 
+The Inoxico Target App is a javascript based application using the OIDC client for authenticating with Identity Server using the Implicit flow.
+
 How to test it out
 ===
 
