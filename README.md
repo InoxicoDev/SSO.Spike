@@ -16,3 +16,8 @@ How it works
 ===
 
 The Third Party application needs to connect to a Service exposed by the Inoxico domain and with that pass through a given `Client Id` and `User Identity Token` (the Identity and **NOT** Access Token from the 3rd Party application). The service will return with a URL that the 3rd Party user will redirect to. The user will be directed to the Inoxico STS's Authorize endpoint and will be propagating that information along. The Inoxico Identity Server has a 3rd Party Identity Provider built and configured to deal with this incoming `User Identity Token` and `Client Id`. It will attempt to contact the 3rd Party STS in order to verify that the `User Identity Token` is valid by using the `Client Id` as a lookup. Once that is verified the claims are populated with the 3rd party user's `User Id` which is matched against the Users in the Inoxico STS using the `Provider Id` field. I've updated the UserService so that it fails if it can't match the users by the `Provider Id`. Once the Authorization is complete, it will redirect the user to the Intended application page where the user will need to click on Login for the cookie to be sent to the Inoxico STS in order to return with the access token and no login screens are required.
+
+What is not addressed
+===
+
+The access token expiry is not handled for 3rd party users. So those users will have to navigate back to the 3rd party app to log back in to the Intended application.
